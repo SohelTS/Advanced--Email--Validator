@@ -1,0 +1,151 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1d1f29, #2c3045);
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.mainForm {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+  padding: 30px 25px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.6s ease;
+}
+
+.mainForm h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #f1f1f1;
+}
+
+.mainForm input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2c3045;
+  color: #fff;
+  font-size: 15px;
+  margin-bottom: 15px;
+  transition: border 0.3s ease;
+}
+
+.mainForm input:focus {
+  outline: none;
+  border: 1px solid #4cafef;
+  box-shadow: 0 0 6px #4cafef66;
+}
+
+.mainForm button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #4cafef;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.mainForm button:hover {
+  background: #3a97d8;
+}
+
+#message {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 20px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#message.show {
+  opacity: 1;
+}
+
+#message.valid {
+  color: #4caf50;
+}
+
+#message.invalid {
+  color: #ff5252;
+}
+
+
+
+
+
+.options {
+  margin-bottom: 15px;
+  text-align: left;
+  font-size: 14px;
+  color: #ddd;
+}
+.options input {
+  margin-right: 8px;
+}
+
+
+
+
+/* Checkbox Styling */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 12px 0;
+  font-size: 15px;
+  color: #ddd;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  accent-color: #4cafef;
+  cursor: pointer;
+}
+
+.checkbox-text {
+  display: inline-block;
+}
+
+.checkbox-text small {
+  color: #aaa;
+  font-size: 13px;
+  margin-left: 5px;
+}
+
+
+
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
