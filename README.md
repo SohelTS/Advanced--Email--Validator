@@ -19,6 +19,7 @@ Unlike simple regex-based validators, this ensures that the email domain is real
 ---
 
 ## 📂 Project Structure
+```text
 PRo/
 ├── images/
 │ ├── valid.png
@@ -28,7 +29,7 @@ PRo/
 ├── app.js # Frontend logic
 ├── server.js # Backend server with MX validation
 └── package.json # Node.js config & dependencies
-
+```
 🔧 Tech Stack
 
 Frontend: HTML, CSS, JavaScript
