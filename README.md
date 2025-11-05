@@ -1,3 +1,4 @@
+Email Validation Platform
 A Full-Stack Real-Time Email Validation Platform built with Node.js, Express, MongoDB, and Vanilla JavaScript.
 Performs multi-layer email verification — format (regex), domain (MX), mailbox (SMTP), and disposable detection.
 Includes optional API integration (Hunter.io) for advanced deliverability checks.
