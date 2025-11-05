@@ -1,0 +1,108 @@
+require("dotenv").config();
+const dns = require("dns");
+const axios = require("axios");
+const disposableDomains = require("disposable-email-domains");
+const EmailVerifier = require("email-existence");
+const Validation = require("../models/Validation");
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+exports.validateMX = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ ok: false, reason: "missing_email" });
+
+    const domain = email.split("@")[1];
+    const mxRecords = await dns.promises.resolveMx(domain);
+
+    if (!mxRecords || mxRecords.length === 0) {
+      return res.json({ ok: false, domain, reason: "no_mx" });
+    }
+
+    return res.json({ ok: true, domain, mx: mxRecords.map(r => r.exchange) });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ ok: false, reason: "server_error" });
+  }
+};
+
+// ADVANCED EMAIL CHECK
+exports.validateEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const formatValid = emailRegex.test(email);
+    const domain = email.split("@")[1];
+    const isDisposable = disposableDomains.includes(domain);
+
+    // MX Check
+    let mxValid = false;
+    try {
+      const mxRecords = await dns.promises.resolveMx(domain);
+      mxValid = mxRecords && mxRecords.length > 0;
+    } catch {
+      mxValid = false;
+    }
+
+    // SMTP Check
+    let smtpValid = null;
+    try {
+      smtpValid = await new Promise(resolve => {
+        EmailVerifier.check(email, (err, exists) => {
+          if (err) resolve(null);
+          else resolve(exists);
+        });
+      });
+    } catch {
+      smtpValid = null;
+    }
+
+    // External API (Optional)
+    let apiStatus = null;
+    try {
+      const response = await axios.get(
+        `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${process.env.HUNTER_API_KEY}`
+      );
+      apiStatus = response.data.data.result;
+    } catch {
+      apiStatus = null;
+    }
+
+    const overallValid =
+      formatValid && !isDisposable && mxValid && (smtpValid !== false) && (apiStatus === "deliverable");
+
+    // Save to MongoDB
+    await Validation.create({
+      email,
+      domain,
+      formatValid,
+      mxValid,
+      smtpValid,
+      apiStatus,
+      overallValid
+    });
+
+    res.json({
+      email,
+      formatValid,
+      isDisposable,
+      mxValid,
+      smtpValid,
+      apiStatus,
+      overallValid
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.getHistory = async (req, res) => {
+  try {
+    const history = await Validation.find().sort({ timestamp: -1 }).limit(10);
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching history" });
+  }
+};
